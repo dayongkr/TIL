@@ -44,10 +44,4 @@ void main(void) {...}
 ```
 
 위와 같이 정의하는 경우도 있는데 이는 표준에 어긋나기 때문에 지양하자.
-<<<<<<< Updated upstream
 참고로 return type이 void가 아닌 이상 함수에는 `return value`이 필히 있어야 하지만 main 함수 같은 경우는 예외라서 적지 않아도 된다.
-=======
-
-참고로 return type이 void가 아닌 이상 함수에는 `return value`이 필히 있어야 하지만 main 함수 같은 경우는 예외라서 적지 않아도 된다.
-
->>>>>>> Stashed changes

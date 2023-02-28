@@ -1,4 +1,4 @@
-# 자료구조개론 1주 차 1차시
+# 자료구조개론 1주 차
 
 `Fundamentals of Data Structures in C`라는 교재를 가지고 자료구조와 알고리즘의 기초 개념들을 배운다.
 

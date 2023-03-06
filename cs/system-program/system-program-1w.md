@@ -88,7 +88,7 @@ Context switching은 데이터를 임시 저장을 함으로써 다시 차례가
 
 ### Virtual memory
 
-Physic memory보다 더 필요하더라도 Program이 돌아갈 수 있도록 무제한 용량이 있는 것과 같은 환상을 주는 Virtual memory를 사용하게 된다. 
+Physic memory보다 더 필요하더라도 Program이 돌아갈 수 있도록 무제한 용량이 있는 것과 같은 환상을 주는 Virtual memory를 사용하게 된다.
 
 각 Process가 혼자만 Memory를 사용하고 있다고 환상을 갖게 해주기도 한다.
 

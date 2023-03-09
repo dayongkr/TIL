@@ -88,6 +88,7 @@ B2U(X)는 2^i * X[i]를 모두 더한 것과 같다. 범위는 [0, 2^w - 1]과 �
   - 0의 표현은 하나이다. 따라서 음수 하나를 더 표현할 수 있다.
   - ~x +1 == -x
   - 표현 범위는 [-2^(w-1), 2^(w-1)-1]이다.
+  - 제일 많이 사용되는 표현 방법
 
 ### Type conversion (signed <-> unsigned)
 
@@ -133,3 +134,47 @@ C에서는 이러한 과정들이 Explicit(명시적), Implicit(암시적) 두 �
 
 위와 같이 signed와 unsigned가 섞여 있는 연산은 Implicit 하게 unsigned로 바뀌므로 조심해야 한다.
 
+### Expanding the bit representation
+
+16bit -> 32bit 또는 32bit -> 64bit로 확장하는 방법을 의미한다.
+
+- Zero extension
+  - w bits -> w+k bits 일 경우 왼쪽 bit를 모두 0으로 채워주는 방식
+- Sign extension
+  - w bits -> w+k bits 일 경우 왼쪽 bit를 sign bit로 채워주는 방식
+
+### Truncating for unsigned & signed
+
+k보다 큰 w bits를 k bits로 변환하는 방법을 의미하는데, 상위 (w-k) bits만큼 떼어내 진다.
+
+> 수식으로 나타내면 w mod 2^k이며 signed일 경우 맨 앞은 당연히 sign bit으로 취급한다.
+
+### Example in c
+
+``` c
+strlen(s) - strlen(t) > 0 // 이렇게 사용하면 안 된다.
+strlen(s) > strlen(t) // 옳은 사용 방법
+```
+
+위와 같은 코드를 작성하면 안 되는 이유는 strlen는 unsigned int return 하므로 만약에 t가 s보다 길이가 길 경우 원치 않은 결과를 얻을 수 있다.
+
+``` c
+#include <stdio.h>
+
+int main()
+{
+  unsigned char c;
+
+  while ((c=getchar()) != EOF) {
+    putchar(c);
+  }
+}
+```
+
+EOF는 C에서는 int -1로 표현된다. 그런데 c 변수는 unsigned char라고 선언했기 때문에 c는 EOF를 다르게 저장하여 while 조건문이 항상 true가 되고 따라서 무한 반복되는 형상을 일으킬 것이다.
+
+## 마무리
+
+어쨌든 코딩할 때 unsigned, signed 등의 conversion을 조심하자. 예를 들어 unsigned인 data type에 0이 저장되어 있는데 여기에 -1 연산을 하면 원치 않은 결과를 얻을 수 있으니 조심하자.
+
+따라서 음수를 가지지 않더라도 범위 문제가 생기지 않는 이상 굳이 unsigned로 선언하는 걸 지양하자. flag의 의미로 사용할 때는 unsigned를 사용해도 좋지만, 수치로 사용될 때 사용하는 건 추천하지 않는다. 따라서 대부분의 언어에선 unsigned를 지원하지 않는다.

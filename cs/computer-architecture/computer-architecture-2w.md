@@ -48,3 +48,55 @@ Old Computer System으로 회귀한 꼴인 것처럼 보이지만 서로를 연�
   - 각 명령어를 실행되는 속도
 - I/O
   - I/O 동작을 수행하는데 걸리는 속도
+
+### CPU
+
+> CPU TIME = CPU Clock Cycles x Clock Cycle Time = CPU Clock Cycles / Clock Rate
+
+- Clock period: 1 -> 0 으로 변하는 주기
+- Clock frequency (rate): 1초에 몇 번 주기가 반복되는지
+  - e.g. 4.0 GHz
+
+Clock cycle의 수를 줄이면 성능 향상을 기대할 수 있다.
+
+- 1 cycle
+  - Clock period가 좀 더 길어서 1 cycle에 연산할 수 있는 경우
+  - 저장할 필요가 없으므로 Resource가 비교적 덜 필요하다
+- 2 cycles
+  - pipline을 사용할 수 있다.
+
+#### Instruction Count and CPI (Without Pipelining)
+
+> Clock Cycles = IC x CPI
+> CPU Time = IC x CPI x Clock cycle Time = (IC * CPI) Clock Rate
+
+- Instruction Count (IC)
+  - 프로그램에 의해 실행된 명령어의 개수
+- Cycles Per instruction (CPI)
+  - Processor의 설계로 결정
+  - 명령어의 종류에 따라 달라질 수 있음, 따라서 Average CPI를 사용한다.
+
+### SPEC CPU Benchmark
+
+다양한 방법으로 측정하지만 보통 Time, Throughput을 위주로 측정한다.
+
+#### Aggregating Performance Ratios
+
+Geometric mean은 각 프로그램에서 측정해서 나온 SPECratio i 개를 모두 곱한 후 루트 i를 씌운다. 이를 사용하면 반대 상황에서도 ratio가 유지돼서 사용하게 된다.
+
+> SPECratio: reference machine과의 elapsed time을 비교한 비율
+
+### The Power Wall
+
+Power ~= Capacitive load * Voltage^2 * Frequency
+
+- Power
+  - 전력소비가 증가할수록 열이 발생하고 실패로 이어진다.
+- Capacitive load
+  - transistor를 작게 만들거나 적게 만들면 되지만 작게 만드는 데는 한계가 있고 적게 만들면 성능 저하로 이어진다.
+- Voltage
+  - 1V보다 낮추는 데는 한계가 있다.
+- Frequency
+  - 당연히 frequency를 낮추면 성능 저하로 이어진다.
+
+이러한 한계로 점점 하드웨어 성능 향상이 어려워지고 있고 따라서 소프트웨어적으로 성능 향상이 중요해지고 있다.

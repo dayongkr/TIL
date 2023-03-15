@@ -54,4 +54,14 @@ ID가 더 높은 declaration 만약에 같으면 CLASS 가 더 높은 declaratio
 
 다만 inline으로 style을 입히면 inline에 최우선이게 된다. 다만 value 옆에 !important를 적게되면 inline도 override 할 수 있다. 다만 너무 남용하지 말자.
 
+#### Specificity 고통에서 벗어나는 팁
+
+최대한 낮은 weight를 가진 selecter 를 사용하는 것이 좋다. 예를 들어 큰 weight를 가진 ID Selector 사용하는 대신 :where selector를 사용하면 0-0-1 weight를 가질 수 있다.
+
+아니면 극단적으로 selector를 중복해서 씀으로써 weight를 가중해 기존 declaration을 override 할 수 있다.
+
+> e.g. #id#id#id#id h1{}
+
+또는 cascade layer를 이용하는 방법이 있다는데 이건 다음에 더 알아보고 모임에서 공유하겠습니다!
+
 > ref. [Specificity - MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity)

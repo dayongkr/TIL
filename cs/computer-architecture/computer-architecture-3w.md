@@ -89,3 +89,72 @@ store x8, @z
 ```
 
 앞서 설명한 memory access는 위와 같이 작동하게 된다.
+
+#### The Number of Registers is Finite
+
+Regs가 정해진 양이 있다보니깐 쓰고 나서는 memory에 저장하고 필요하면 다시 load한다.
+
+### Constant
+
+Immediate Operands를 사용하면 Instruction에 Constant data를 포함 시킬 수 있다.
+
+``` risc
+add i x22, x23, 4
+```
+
+addi operand와 a negative integer value를 사용하면 되므로 불필요하게 subtract immediate instruction은 존재하지 않는다.
+
+``` risc
+addi x1, x0, 100
+li x1 100
+```
+
+RISC-V regs에서 x0, zero는 constant 0을 의미하고 x0에 overwritte를 하면 안된다. Constant Zero를 사용해서 regs 간 이동 및 copy가 가능해지고 constant value를 regs로 저장할 수 있다. 또는 li instruction을 사용해서 immediate value를 load 할 수 있다.
+
+> li는 pseudo-instuction이다.
+
+### Multiply
+
+만약에 32 bit x 32 bit multiply 연산을 수행하면 64 bit의 결과가 나올 수 있다. 또한 multiply은 2개의 regs가 필요하다.
+
+> 기본적으로 RV32I 기준 ISA는 mul/div instruction은 포함되지 않았기 때문에 RV32IM 버전을 사용해야한다.
+
+``` risc
+mul x3, x1, x2
+mulh x3, x1, x2 // all signed
+mulhu ... // all unsigned
+mulhsu ... // signed or unsigned
+```
+
+addition과 달리 signed, unsigned에 따라 다른 instruction을 가지고 있다. mul instruction은 lower 32bits를 load하지만 나머지 instruction은 upper 32bits를 load한다.
+
+### Division
+
+``` risc
+div x3, x1, x2
+rem x3, x1, x2
+```
+
+각각 나누기와 나머지를 구한 instruction이고 이또한 Unsigned version (divu, remu)이 있다.
+
+### Logical (Bitwise, Shift)
+
+|Operation|C|Java|RISC-V|
+|-|-|-|-|
+|Bitwise AND|&|&|and, andi|
+|Bitwise OR|\||\||or, ori|
+|Bitwise XOR|^|^|xor, xori|
+|Bitwise NOT|~|~|xor, xori|
+|Shift left|<<|<<|sll slli|
+|Shift right|>>|>>>|srl srli srai|
+
+- sra: Shift Right Arithmetic Shift, srl: Shift Left Logical Shift
+- slli, srli의 상수부분은 0 ~ 31(32 bit기준)까지 지원한다.
+- sll, srl, sra의 rs2 부분의 5 bits(0~31) 아래에 있는 양만큼 shift하게 된다.
+
+``` risc
+xori x10, x11, -1
+not x10, x11
+```
+
+xori instruction을 사용해서 NOT 연산자를 구현했는데 따로 pseudo instruction(not)도 존재한다.

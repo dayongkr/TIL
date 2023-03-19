@@ -76,7 +76,7 @@ multiplication 보다 더 느리다. (30 이상의 clock cycle) 따라서 multip
 
 V = x * 2^y 형태의 숫자들을 encode 하는 목적으로 사용되면 1985년에 IEEE Standard 754를 제정하고 업데이트해나갔다. 앞으로 해당 표준이 어떻게 floating number를 표현하는지 알아볼 것이다.
 
-숫자를 표현하는 방식은 -1 ^ s * M * 2 ^ E이다.
+숫자를 표현하는 방식은 -1 ^ s \* M * 2 ^ E이다.
 
 - negative이면 s = 1, postive 이면 s = 0
 - Significand(frac) M은 [1, 2) 범위를 가진다.
@@ -129,3 +129,5 @@ exp는 앞서 설명한 것처럼 0으로 채워져 있고 M이 leading 1이 없
 예시를 들기 편하도록 8 bits로 줄여서 예제를 보여주셨다. exp는 4 bits (bias = 7(2^3-1)), frac는 3 bits로 가정했다.
 
 0 0000 000 ~ 0 000 111까지 Denormalize, 0 0001 000 ~ 0 1110 111까지가 Normalize 나머지 0 1111 ~는 Special Value이다. 0 000 111은 7/512이고 0 001 000은 8/512인 것을 볼 때 denormalize 와 normalize 덕분에 자연스럽게 넘어가는 것을 알 수 있다.
+
+> e.g. 01110000b = 1\*2^7 = 128, 00000001b = 1/8 * 2^-6

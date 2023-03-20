@@ -22,7 +22,7 @@ Signed integer도 유효범위를 넘어가는 overflow 현상이 일어날 수 
 
 2's complement의 유효범위를 보면 음수가 절댓값 기준 하나 더 표현할 수 있기 때문에 negation 연산을 수행하면 overflow 문제가 발생할 수 있다.
 
-> e.g. 4bit일 땐 -8(1000)을 negation 하면 똑같이 -8(1000)이 된다.
+> e.g. 4bit일 땐 -8(1000)을 negation 하면 똑같이 -8(1000)이 된다. (XOR 1000 + 1 = 0111 + 0001 = 1000)
 
 ### Unsigned & 2's complement multiplication
 

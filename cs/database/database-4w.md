@@ -49,3 +49,16 @@ Relational Algebra는 Set이지만 SQL은 Multi-set(or bag) semantics를 기본�
 join을 수행하기 전 π을 사용해서 불필요한 field를 제거한다면 더 효율적으로 join을 수행할 수 있다.
 
 > ⌵는 OR logic을 말하고 ^는 and logic을 말한다.
+
+## 실습
+
+- union
+  - 두 개이상의 SQL 쿼리문을 합치는 연산자로 중복은 제거한다.
+  - 다만 union all은 중복을 허용한다.
+- select * from emp, dept;
+  - Cross product를 수행하는 쿼리문이다.
+  - 여기서 Where 문을 사용하면 Join을 수행할 수 있다.
+- select * from emp natural join dept;
+  - 와 같이 명시적으로 natural join을 수행할 수 있다.
+- select * from R divide by S
+  - R/S 연산을 수행하는 쿼리문

@@ -80,7 +80,7 @@ Javascript는 기본으로 Unicode를 지원한다. 또한 backtick(\`)을 사�
 
 #### Coercion
 
-![wrap](./img/2023-03-19-12-56-59.png)
+![wrap](./imgs/2023-03-19-12-56-59.png)
 
 분명히 String은 객체가 아니라 primitive인데 property를 사용할 수 있는 것을 볼 수 있다. 이는 Javascript의 Coercion이라는 개념 때문에 가능한 일이다.
 
@@ -126,3 +126,79 @@ JS에서 Array는 아래 기본 성질을 가지고 있다.
 #### Converse String to Number
 
 문자열을 숫자로 명시적으로 바꿀 때 `Number("0")`라고 해도 되지만 만약에 문자열에 숫자를 제외한 문자들이 포함되면 NaN을 반환한다. 따라서 "100km" 이러한 문자열을 숫자로 변환하고 싶으면 `parseInt()` 또는 `parseFloat()` 내장함수를 사용하자.
+
+## 제어문
+
+제어문에는 조건문, 반복문을 말할 수 있는데 이는 Java의 syntax랑 거의 유사하기 때문에 일단 정리는 스킵하고 Es 6이나 JS의 특징만 따로 정리했습니다.
+
+### for in, for of
+
+기본적인 for 문 말고도 다양한 방법은 for 문을 사용할 수 있다. 예를 들어 for in, for of 반복문이 있다. 각각 property의 key와 value를 반환하는 반복은 `for (variable in object)`와 같이 사용한다. 다만 for in은 prototype의 property도 반환하니 이를 방지하기 위해 `Object.hasOwn` 함수를 사용해서 조건문을 추가하는 것이 좋다. for of의 특징은 이제 iterable object를 대상은 반복문을 수행하는데 앞서 말한 것과 같이 value를 반환한다.
+
+## 연산자
+
+대부분의 기본 연산자들은 Java, C와 유사하기 때문에 이는 제외하고 특이한? 부분만 일단 다루려고 한다. 또한 ES6+에는 정말 재밌고 유용한 연산자들이 많고 배우면 엄청 편한 연산자들이 되게 많으니 [Expressions and operators: MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators) 해당 링크를 통해 다양한 연산자를 계속 알아보려고 한다. 일단은 기본적인 것만...
+
+### 조건 연산자(유일한 삼항 연산자)
+
+``` js
+const result = 2 > 0 ? "true" : "false";
+```
+
+위와 같이? 앞엔 조건 그 뒤엔 해당 조건이 true일 때 반환할 값 그다음에 :로 분리한 후 조건이 false일 때 반환할 값을 적으면 된다. if와 같은 문이 아니고 그저 표현식이기 때문에 값을 적을 수 있는 모든 곳에 사용이 가능해 정말 유용하게 사용할 수 있다.
+
+### typeof 연산자
+
+분명히 타입을 나타내는 문자열을 반환하는 연산자이지만 이상하게도 JS의 7가지 data type을 알맞게 반환하지 못한다. 아래 typeof의 반환 값을 참고해서 다음에 당황하지 않도록 하자!
+
+|statement|return value|
+|-|-|
+|typeof undefined|"undefined"|
+|typeof null|"object"|
+|typeof []|"object"|
+|typeof true|"boolean"|
+|typeof 1|"number"|
+|typeof ""|"string"|
+|typeof Symbol()|"symbol"|
+|typeof function(){}|function|
+
+위와 같이 null은 primitive value이지만 object라고 반환한다. Javascript 같은 경우에는 NULL을 type tag 0로 NULL POINTER을 구현했기 때문에 객체가 맞다. legacy code들 때문에 고치기 애매해서 여전히 똑같이 object라고 한다.
+
+또 특이한 점은 function을 제외한 object들은 구체적인 type을 반환하지 않는다. 예를 들어 array는 object를 반환한다.
+
+### Optional chaining (?.)
+
+![optional chaining example](./imgs/2023-03-21-19-37-58.png)
+
+object의 property 또는 함수를 호출하는데 반환된 값이 undefined 또는 null일 때 발생하는 위와 같은 오류를 방지할 수 있다.
+
+``` js
+obj.val?.prop; // = obj.val && obj.val.prop;
+function?.();
+```
+
+위와 같이 ?. 연산자를 붙여서 사용한다. 해당 연산자를 사용하지 않으려면 && 연산자를 사용해 short circuit evaluation 이라하는 형상을 활용해야 한다.
+
+### Destructuring assignment
+
+배열과 object를 분해해서 값들을 각 변수에 분리해서 넣을 수 있게 하는 expression이다. 이 또한 ES6에 새로 나온 문법이다.
+
+``` js
+const [a, b] = [10, 20];
+console.log(a); // 10
+console.log(b); // 20
+```
+
+먼저 배열은 위와 같이 배열의 순서대로 대입이 되는데 만약에 변수보다 대입할 값들이 더 많으면 보통 ... 연산자를 사용해서 나머지 값들도 배열로 받을 수 있다.
+
+``` js
+const {a, b: c} = {a: 10, c:20};
+```
+
+객체 같은 경우엔 해체할 객체의 property와 변수의 이름을 맞추면 되는데 콜론을 사용해서 binding도 가능하다.
+
+정말 여러 곳에서 활용하기 좋은 문법이라 [Destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)를 참고하면 정말 좋을 것이다.
+
+## 함수
+
+

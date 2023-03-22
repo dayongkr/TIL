@@ -39,7 +39,7 @@ intromanToInt(char *s)
 }
 ```
 
-처음엔 각 문자를 숫자로 mapping하는 함수를 만들고 만약에 문자 앞에 자기보다 작은 문자가 있으면 빼는 로직만 구현하면 된다.
+처음엔 각 문자를 숫자로 mapping 하는 함수를 만들고 만약에 문자 앞에 자기보다 작은 문자가 있으면 빼는 로직만 구현하면 된다.
 
 ### [LeetCode] Excel Sheet Column Number
 

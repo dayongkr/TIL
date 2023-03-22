@@ -4,7 +4,7 @@
 
 RISC-V instrutions은 4 bytes length를 가지지만 CISC는 가변 길이(1 ~ 15 bytes)를 가진다.
 
-> 가변 길이를 가지면 CPU가 operation마다의 길이를 알고 이를 불러올 수 있도록 하는 부분을 구현해야 하기 때문에 더 복잡해진다.
+> 가변 길이를 가지면 CPU가 operation마다의 길이를 알고 이를 불러올 수 있도록 하는 부분을 구현해야 하므로 더 복잡해진다.
 
 ### R-format Instruction
 
@@ -28,7 +28,7 @@ RISC-V instrutions은 4 bytes length를 가지지만 CISC는 가변 길이(1 ~ 1
   - additional opcode
   - 7 bits
 
-비슷한 operatio의 opcode는 서로 같고 보통 funct3 또는 funct7으로 어떤 operation인지 구분한다.
+비슷한 operation의 opcode는 서로 같고 보통 funct3 또는 funct7로 어떤 operation인지 구분한다.
 
 #### R-format example
 
@@ -45,7 +45,7 @@ add x9, x20, x21
 sub x9, x20, x21
 ```
 
-sub instruction은 위에서 func7을 32로만 바꾸면 된다.
+sub instruction은 위에서 func7 을 32로만 바꾸면 된다.
 
 #### R-format Immediate and load
 
@@ -53,7 +53,7 @@ sub instruction은 위에서 func7을 32로만 바꾸면 된다.
 |-|-|-|-|-|
 |12 bits|5 bits|3 bits|5 bits|7 bits|
 
-위와 같이 immediate Aritmetic instruction에는 funct7과 rs2 대신 immediate 부분이 있다.
+위와 같이 immediate Arithmetic instruction에는 funct7 과 rs2 대신 immediate 부분이 있다.
 
 #### R-format Immediate example
 
@@ -68,9 +68,9 @@ addi x9, x20, 123
 
 ### Sign Extension
 
-서로 다른 bit끼리 연산하기 위해 더 큰 bit로 맞춰야하는데 이를 Sign Extension이라고 한다. Sign Extension을 수행할 때 sign bit을 왼쪽에 비어 있는 부분에 복제한다.
+서로 다른 bit끼리 연산하기 위해 더 큰 bit로 맞춰야 하는데 이를 Sign Extension이라고 한다. Sign Extension을 수행할 때 sign bit을 왼쪽에 비어 있는 부분에 복제한다.
 
-li를 하면 기본적으로 sign-extend를 사용하고 lh, lb는 sign-extends, lhu, lbu는 zero-extends(0으로 채우는 extend)을 수행한다.
+li를 하면 기본적으로 sign-extend를 사용하고 lh, lb는 sign-extends, lhu, lbu는 zero-extends (0으로 채우는 extend)을 수행한다.
 
 ### Memory addressing
 

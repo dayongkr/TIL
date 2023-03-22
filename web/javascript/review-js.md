@@ -30,7 +30,7 @@ const는 C에서 상수를 define 한 것처럼 한번 초기화하고 바뀌면
 
 let, const 개념은 ES6에 나온 것으로 일단 scope 차이가 있다고 생각하고 넘어가면 될 것 같다.
 
-> Scope 부분에서 다시 다룰 것이다.
+> let, const는 block scope를 가지고 있고 var는 function scope를 가진다. 자세한건 Scope 파트에서 다루도록 하자.
 
 ### Data type
 
@@ -244,7 +244,41 @@ Scope란 value 그리고 expressions가 visible 한지 또는 reference 할 수 
 - Function scope: 함수 내부에서 선언된 변수들은 함수 내부에서만 접근이 가능하다.
 - Block scope: ES6에서 나온 문법으로 if, for, while, try/catch 등의 블록 내부에서 선언된 변수들은 블록 내부에서만 접근이 가능하다.
   - let, const로 변수가 선언됐을 상황에 해당한다.
+  - 기존에는 IIFE를 사용해서 block scope를 만들었지만 이제는 let, const를 사용하면 된다.
 
-Js의 scope는 Lexical scope이다. 즉, 함수가 어디서 호출되었는지가 아니라 어디서 선언되었는지에 따라 결정된다.
+Js의 scope는 Lexical(정적) scope이다. 즉, 함수가 어디서 호출되었는지가 아니라 어디서 선언되었는지에 따라 결정된다. 또한 scope는 계층적인 구조를 가지고 있기 때문에 외부 scope에 있는 변수 이름을 내부 scope에서 사용하면 내부 scope의 변수가 우선시 된다. 이를 shadowing이라고 한다.
 
-작성중...
+### Closure
+
+``` js
+let globalFunc;
+{
+  let blockVar = "a";
+  globalFunc = function() {
+    console.log(blockVar);
+  }
+}
+globalFunc(); // a
+```
+
+Closure는 위와 같이 함수가 선언될 때의 scope를 기억하고 있다가 함수가 호출될 때 그 scope에 접근할 수 있는 것이다.
+
+### Hoisting
+
+``` js
+x; // undefined
+var x = 3;
+x; // 3
+```
+
+위와 같이 변수를 선언하기 전에 사용할 수 있는 것을 Hoisting이라고 한다. 이는 변수 선언이 함수의 최상단으로 끌어올려지는 것이다. 따라서 var로 선언된 변수는 함수의 최상단에서 선언된 것과 같은 효과를 가진다. 단 선언만 끌어올려지고 할당은 끌어올려지지 않는다. 또한 변수에 할당된 함수 표현식은 끌어올려지지 않는다.
+
+이러한 부분은 딱 봐도 명확하지 않기 때문에 block scope를 가진 let, const를 사용하는 것이 좋다.
+
+### strict mode
+
+``` js
+"use strict";
+```
+
+위와 같이 코드의 최상단 선언하면 strict mode가 전역에 적용된다. 특정 함수에만 적용하고 싶으면 함수 안에 선언해도 된다. strict mode는 ES5에서 나온 문법으로 기존의 JS의 문제점을 해결하기 위해 나온 문법이다. strict mode를 사용하면 implicit global variable 선언이 불가능해지기 때문에 코드의 안정성을 높일 수 있다.

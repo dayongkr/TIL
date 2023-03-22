@@ -162,7 +162,7 @@ const result = 2 > 0 ? "true" : "false";
 |typeof Symbol()|"symbol"|
 |typeof function(){}|function|
 
-위와 같이 null은 primitive value이지만 object라고 반환한다. Javascript 같은 경우에는 NULL을 type tag 0로 NULL POINTER을 구현했기 때문에 객체가 맞다. legacy code들 때문에 고치기 애매해서 여전히 똑같이 object라고 한다.
+위와 같이 null은 primitive value이지만 object라고 반환한다. Javascript 같은 상황에는 NULL을 type tag 0로 NULL POINTER을 구현했기 때문에 객체가 맞다. legacy code들 때문에 고치기 애매해서 여전히 똑같이 object라고 한다.
 
 또 특이한 점은 function을 제외한 object들은 구체적인 type을 반환하지 않는다. 예를 들어 array는 object를 반환한다.
 
@@ -201,4 +201,50 @@ const {a, b: c} = {a: 10, c:20};
 
 ## 함수
 
+일단 매우 기본적인 함수 선언 방법은 생략한다.
 
+### 화살표 함수
+
+ES6에서 나온 문법으로 Arrow function expressions라고 traditional 한 익명 함수보다 더 제한을 가진 방법으로 함수를 선언할 수 있다.
+
+``` js
+const sayHello = () => {
+  console.log("hello");
+}
+
+const say = (data) => {
+  console.log(data);
+}
+
+const person = {name: "dayong", age:23};
+
+const printInform = ({name, age}) => {
+  console.log(name + age);
+}
+
+printInform(person)
+```
+
+위와 같이 함수를 선언할 수 있으며 3가지의 특징을 가지고 있다.
+
+- this, arguments, super 들에 대한 자신만의 binding이 없고 방법으로 사용할 수 없다.
+- constructors로 사용할 수 없다.
+- yield를 사용할 수 없다.
+
+화살표 함수만의 특징은 아니고 다른 일반적인 함수에서도 적용할 수 있는 특징으로는 이제 위에서 배운 Destructuring assignment를 함수의 매개변수에서도  똑같이 적용이 가능하고 기본값을 지정할 수 있게 됐다.
+
+## Scope
+
+Scope란 value 그리고 expressions가 visible 한지 또는 reference 할 수 있는지를 결정하는 것이다. JS에는 Global scope, Module scope, Function scope가 있다.
+
+> 참고로 Scope와 existence는 다르다. Scope는 접근 가능한지 여부이고 existence는 선언되었는지 여부이다.
+
+- Global scope: 모든 코드가 접근할 수 있는 scope이다. 모든 변수는 기본적으로 global scope에 선언된다.
+- Module scope: ES6에서 나온 문법으로 module을 사용하면 모든 코드는 module scope에 선언된다.
+- Function scope: 함수 내부에서 선언된 변수들은 함수 내부에서만 접근이 가능하다.
+- Block scope: ES6에서 나온 문법으로 if, for, while, try/catch 등의 블록 내부에서 선언된 변수들은 블록 내부에서만 접근이 가능하다.
+  - let, const로 변수가 선언됐을 상황에 해당한다.
+
+Js의 scope는 Lexical scope이다. 즉, 함수가 어디서 호출되었는지가 아니라 어디서 선언되었는지에 따라 결정된다.
+
+작성중...

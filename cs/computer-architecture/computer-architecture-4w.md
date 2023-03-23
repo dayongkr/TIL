@@ -66,13 +66,13 @@ addi x9, x20, 123
 |123|20|0|9|19|
 |-|-|-|-|-|
 
-### Sign Extension
+#### Sign Extension
 
 서로 다른 bit끼리 연산하기 위해 더 큰 bit로 맞춰야 하는데 이를 Sign Extension이라고 한다. Sign Extension을 수행할 때 sign bit을 왼쪽에 비어 있는 부분에 복제한다.
 
 li를 하면 기본적으로 sign-extend를 사용하고 lh, lb는 sign-extends, lhu, lbu는 zero-extends (0으로 채우는 extend)을 수행한다.
 
-### Memory addressing
+#### Memory addressing
 
 주소 또한 32bit(non-negative) integer로 되어 있다. mem -> regs를 load, regs -> mem을 store이라고 한다.
 
@@ -143,3 +143,70 @@ addi x19 x19 1280
 ```
 
 위와 같이 먼저 lui instruction으로 upper 20-bit를 먼저 복사하고 addi로 lower 12-bit를 넣으면 32-bit constant를 사용할 수 있다.
+
+#### Endianness
+
+Risc-V는 little endian을 사용한다. little endian은 LSB가 가장 작은 주소에 저장되는 방식이다. 반대로 big endian은 MSB가 가장 작은 주소에 저장되는 방식이다.
+
+### Conditional Operations
+
+Conditional operation은 branch instruction을 사용한다.
+
+- beq
+  - branch if equal
+  - e.g. beq rs1, rs2, L1 (if rs1 == rs2 then goto L1)
+- bne
+  - branch if not equal
+  - e.g. bne rs1, rs2, L1 (if rs1 != rs2 then goto L1)
+- blt
+  - branch if less than
+  - e.g. blt rs1, rs2, L1 (if rs1 < rs2 then goto L1)
+- bge
+  - branch if greater than or equal
+  - e.g. bge rs1, rs2, L1 (if rs1 >= rs2 then goto L1)
+
+blt와 bge는 signed comparison이고 bgeu와 bltu는 unsigned comparison이다.
+
+위와 같은 branch instruction을 사용해서 Loop Statements를 구현할 수 있다.
+
+> e.g. `beq x0, x0, L1`을 사용하여 loop를 구현할 수 있다.
+
+#### Jump Instruction
+
+branch instruction과 달리 conditional operation이 없는 instruction이다. 다만 jump 이후에 다시 돌아오기 위해 PC를 저장할 regs 주소를 지정해야 한다. 현재 PC를 저장하지 않는 이유는 다시 기존 PC로 오면 다시 jump instruction을 수행하기 때문이다. 따라서 다음 instruction을 수행하기 위해 PC + 4를 저장한다.
+
+> 함수를 호출할 때에도 Jump instruction을 사용한다.
+
+- jal
+  - jump and link
+  - e.g. jal x1, L1 (x1 = PC + 4; goto L1)
+- jalr
+  - jump and link register
+  - e.g. jalr x1, Offset(x2) (x1 = PC + 4; goto x2)
+- j
+  - jump (Pseudo instruction)
+  - e.g. j L1 (goto L1)
+
+> Program Coutner(PC)는 현재 instruction의 주소를 가리키는 register이다. PC는 항상 4의 배수를 가리킨다.
+
+#### Branch Addressing
+
+|imm[12]|imm[10:5]|rs2|rs1|funct3|imm[4:1]|imm[11]|opcode|
+|-|-|-|-|-|-|-|-|
+
+SBformt으로 저장하는데 PC는 4씩 증가하기 때문에 imm[0]은 0임을 보장할 수 있기 때문에 imm[0]은 저장하지 않는 덕분에 immediate를 13bit로 저장할 수 있다.
+
+주소를 가르키는 방법은 PC-relative addressing을 사용한다. PC-relative addressing은 PC에 immediate를 더한 주소로 branch한다.
+
+#### Jump Addressing
+
+|imm[20]|imm[10:1]|imm[11]|imm[19:12]|rd|opcode|
+|-|-|-|-|-|-|
+
+UJformat으로 저장한다. PC는 4씩 증가하기 때문에 imm[0]은 0임을 보장할 수 있기 때문에 imm[0]은 저장하지 않는 덕분에 immediate를 21bit로 저장할 수 있다. 
+
+Branch와 달리 jump는 PC-relative addressing을 사용하지 않는다. 따라서 lui와 jalr instruction을 조합해서 사용한다.
+
+### RISC-V Encoding Summary
+
+어떠한 format이더라도 Immediate의 MSB는 Sign bit이다.

@@ -2,7 +2,7 @@
 
 ## Symbol table
 
-compile time에 symbol table을 만들어서 변수의 semantics를 저장한다. 여기에는 변수의 이름, 타입, scope, addresses(상대적인) 등이 저장된다.
+compile time에 symbol table을 만들어서 변수의 semantics를 저장한다. 여기에는 변수의 이름, 타입, scope, addresses(상대적인 주소) 등이 저장된다.
 
 ## Pointer
 
@@ -11,7 +11,7 @@ int a = 10;
 int *p = &a;
 ```
 
-&(reference operator) 연산자를 사용해서 변수의 주소를 알 수 있다. *(dereference operator) 연산자를 사용해서 주소에 접근할 수 있고 poitner 변수를 선언할 수 있다.
+&(reference operator) 연산자를 사용해서 변수의 주소를 알 수 있다. *(dereference operator) 연산자를 사용해서 주소에 접근할 수 있고 pointer 변수를 선언할 수 있다.
 
 pointer 변수는 type 상관 없이 모두 8-byte unsigned integer이다. 그런데 타입을 명시하는 이유는 disreference operator를 사용해서 해당 주소에 접근할 때 타입을 알아야 몇 개의 bytes를 읽어야 하는지 알 수 있기 때문이다.
 
@@ -37,7 +37,7 @@ int **pp = &p;
 void *p = &a;
 ```
 
-void pointer는 어떤 타입의 주소를 저장할 수 있다. 하지만 void pointer를 dereference하면 segmentation fault가 발생하기 때문에  type casting을 해줘야 한다.
+void pointer는 어떤 타입의 주소이든 저장할 수 있다. 하지만 void pointer를 dereference하면 segmentation fault가 발생하기 때문에 type casting을 해줘야 한다.
 
 ```c
 int a = 10;
@@ -90,7 +90,7 @@ int arr[2][3] = {{1,2,3},{4,5,6}};
 int *p = arr;
 ```
 
-위에서 a[1][2]에 접근하려면 p[1*num_cols+2]를 해야 한다. 2D structure가 무너지는 것이다.
+위에서 arr[1][2]에 접근하려면 p[1*num_cols+2]를 해야 한다. 2D structure가 무너지는 것이다.
 
 ```c
 int arr[2][3] = {{1,2,3},{4,5,6}};

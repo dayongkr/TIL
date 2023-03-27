@@ -144,7 +144,7 @@ HTT(Hyper Threading Technologies)도 지원하는데 각 코어가 2개의 가�
 
 - Application programming Regs (64-bit)
   - Integer
-    - %r(a~d)x, %rsi, %rdi, %rbp, %rsp, %r(8~15)
+    - %r(a\~d)x, %rsi, %rdi, %rbp, %rsp, %r(8~15)
     - r대신 e를 붙이면 low order 32-bit를 설정 가능, r8부터는 뒤에 d를 붙이면 됨
     - 다른 suffix를 붙이면 더 low order 한 bit 들도 설정 가능
     - 총 16개

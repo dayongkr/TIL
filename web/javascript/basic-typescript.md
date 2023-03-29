@@ -511,4 +511,3 @@ const dropdown = new Dropdown<string>();
 ```
 
 위와 같이 제네릭을 사용해서 클래스를 정의할 수 있다.
-

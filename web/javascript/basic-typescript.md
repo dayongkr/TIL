@@ -270,3 +270,245 @@ const captain: Developer = {
 
 위와 같이 여러 interface를 확장해서 사용할 수 있다.
 
+## Enums
+
+특정 값들의 집합에 이름을 지정한 것이다.
+
+```ts
+enum Shoes {
+  Nike,
+  Adidas
+}
+```
+
+위와 같이 따로 값을 지정하지 않으면 초기값이 0부터 시작해서 1씩 증가한다.
+
+```ts
+enum Shoes {
+  Nike = 1 ,
+  Adidas
+}
+```
+
+위와 같이 값을 지정하면 초기값이 1부터 시작한다.
+
+```ts
+enum Shoes {
+  Nike = "나이키",
+  Adidas = "아디다스"
+}
+```
+
+위와 같이 문자열도 지정할 수 있다. 다만 auto-incrementing은 문자열에는 적용되지 않는다.
+
+이외로 문자와 숫자를 혼합하여 생성할 순 있지만 권고하지 않는다.
+
+### keyof, typeof
+
+```ts
+const person = {
+  name: 'captain',
+  age: 100
+};
+
+type Person = typeof person;
+```
+
+위와 같이 typeof를 사용하면 객체의 타입을 가져올 수 있다.
+
+```ts
+const person = {
+  name: 'captain',
+  age: 100
+};
+
+type Person = keyof typeof person;
+```
+
+위와 같이 keyof를 사용하면 객체의 속성을 가져올 수 있다. keyof는 객체의 속성을 가져오는 것이기 때문에 typeof를 사용해서 객체의 타입을 가져와야 한다.
+
+#### instance vs type
+
+```ts
+const person = {
+  name: 'captain',
+  age: 100
+};
+
+interface Person {
+  name: string;
+  age: number;
+}
+
+type Person = typeof person;
+```
+
+type이랑 interface랑 비슷하면서 syntax는 다르다. 그 외 차이점이 있지만 일단 객체의 타입을 정의할 땐 interface를 사용하고 그 외에는 type을 사용하는 것이 일반적이다.
+
+## Union Type
+
+```ts
+function logMessage(value: string | number) {
+  if (typeof value === 'number') {
+    value.toLocaleString();
+  }
+  if (typeof value === 'string') {
+    value.toString();
+  }
+  throw new TypeError('value must be string or number');
+}
+```
+
+위와 같이 `|`를 사용해서 여러 타입을 지정할 수 있다. 이렇게 하면 타입을 지정할 때 여러 타입을 고려해야 하기 때문에 코드가 복잡해진다. 그래서 타입 가드를 사용한다.
+
+## Intersection Type
+
+```ts
+interface Developer {
+  name: string;
+  skill: string;
+}
+
+interface Person {
+  name: string;
+  age: number;
+}
+
+function askSomeone(someone: Developer & Person) {
+  someone.name;
+  someone.skill;
+  someone.age;
+}
+```
+
+위와 같이 `&`를 사용해서 둘 다 만족하는 타입을 지정할 수 있다.
+
+## Class
+
+### readonly
+
+```ts
+class Person {
+  public readonly name: string;
+  public age?: number;
+  constructor(name: string, age?: number) {
+    this.name = name;
+    this.age = age;
+  }
+}
+
+const captain = new Person('captain', 100);
+captain.name = 'captain2'; // error
+```
+
+위와 같이 readonly를 사용하면 속성을 변경할 수 없다.
+
+### Accessor
+
+```ts
+class Person {
+  public readonly name: string;
+  private age: number;
+  constructor(name: string, age?: number) {
+    this.name = name;
+    this.age = age;
+  }
+  get age(): number {
+    return this.age;
+  }
+  set age(value: number)) {
+    this.age = value < 0 ? 0 : value;
+  }
+}
+```
+
+public, private, protected와 같이 접근 제한자를 사용할 수 있다. 또한 getter, setter를 사용할 수 있다. 만약에 get만 사용하면 readonly와 같은 효과를 낼 수 있다.
+
+### Abstract Class
+
+```ts
+abstract class Animal {
+  abstract cry(): string;
+}
+```
+
+위와 같이 abstract를 사용하면 추상 클래스가 된다. 추상 클래스는 인스턴스를 생성할 수 없다. 그리고 추상 클래스를 상속받는 클래스는 추상 클래스의 추상 메소드를 구현해야 한다.
+
+## Generic
+
+Generic은 타입을 정의할 때 정해지지 않고 사용할 때 정해지는 것이다.
+
+```ts
+function getText<T>(text: T): T {
+  return text;
+}
+
+getText<string>('hi');
+```
+
+위와 같이 제네릭을 사용해서 함수를 정의하고 호출을 하면
+
+``` ts
+function getText(text: string): string {
+  return text;
+}
+```
+
+위와 같이 컴파일된다.
+
+따라서 제네릭은 어떤 타입을 받을지 모르는 상황에서 사용한다. any를 사용하게 되면 타입 검사를 하지 않기 때문에 제네릭을 사용하는 것이 좋다.
+
+``` ts
+function logText<T>(text: T): T {
+  console.log(text.length); // error
+  return text;
+}
+```
+
+text가 .length가 있다는 단서가 없기 때문에 위의 코드는 에러가 발생한다.
+
+``` ts
+function logText<T>(text: T[]): T[] {
+  console.log(text.length); // ok
+  return text;
+}
+
+function logText<T>(text: Array<T>): Array<T> {
+  console.log(text.length); // ok
+  return text;
+}
+```
+
+따라서 위 두 가지 방법으로 선언을 해야 한다.
+
+``` ts
+interface lengthType {
+  length: number;
+}
+
+function logText<T extends lengthType>(text: T): T {
+  console.log(text.length); // ok
+  return text;
+}
+```
+
+위와 같이 extends를 사용해서 제네릭의 타입을 확장할 수 있다.
+
+### 제네릭 클래스
+
+``` ts
+class Dropdown<T> {
+  private items: T[] = [];
+  addItem(item: T) {
+    this.items.push(item);
+  }
+  getItems(): T[] {
+    return this.items;
+  }
+}
+
+const dropdown = new Dropdown<string>();
+```
+
+위와 같이 제네릭을 사용해서 클래스를 정의할 수 있다.
+

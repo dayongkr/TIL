@@ -59,4 +59,112 @@ sw x1, 0(sp) # x1의 값을 stack pointer가 가리키는 곳에 저장한다.
 addi sp, sp, 20 # stack pointer를 20 bytes higher로 이동시킨다.
 ```
 
-만약에 function이 20 btes의 space를 필요하다면 function이 시작할 때 stack pointer를 20 bytes lower로 이동시킨다. 또한 return 할 땐 stack pointer를 20 bytes higher로 이동시킨다.
+만약에 function이 20 bytes의 space를 필요하다면 function이 시작할 때 stack pointer를 20 bytes lower로 이동시킨다. 또한 return 할 땐 stack pointer를 20 bytes higher로 이동시킨다.
+
+### Saving Registers
+
+- Caller-save regs
+  - ra, t0-t6, a0-a7
+  - 이 regs는 caller가 사용할 수 있지만 함수를 호출하고 나서 사용하려면 sf에 save해야 한다.
+- Callee-save regs
+  - s0-s11
+  - fp
+  - sp
+  - 이 regs는 callee가 사용할 수 있지만 사용하려면 sf에 저장을 하고 반환하기 전 restore해야 한다.
+
+#### Avoiding Unnecessary Save & Restore
+
+- 짧은 기간 사용할거면 s1 - s11(Saved regs)를 사용하지 않고 t0 - t6(Temp regs)를 사용한다.
+- 함수를 호출하기 전 또는 하고 나서 Saved regs를 사용해라
+- 만약에 가능하다면 x10 - x17(Arguement, Result regs)을 Temp regs로 사용하라
+
+### Leaf Procedure Example
+
+``` c
+int leaf_example(int g, int h, int i, int j) {
+  int f;
+  f = (g+h) - (i+j);
+  return f;
+}
+```
+
+- Argument passing
+  - g = x10
+  - h = x11
+  - i = x12
+  - j = x13
+- f in x20
+  - caller의 x20은 stack에 저장되어야 한다.
+- Temp regs
+  - x5(t0), x6(t1)
+- Return value
+  - x10
+
+```assembly
+leaf_example:
+  addi sp, sp, -4 # Allocate space for f
+  sw x20, 0(sp) # Save caller's x20
+  add x5, x10, x11 # g + h
+  add x6, x12, x13 # i + j
+  sub x20, x5, x6 # f = (g+h) - (i+j)
+  addi x10, x20, 0 # Return value
+  lw x20, 0(sp) # Restore caller's x20
+  addi sp, sp, 4 # Deallocate space for f
+  jalr x0, 0(x1) # Return
+```
+
+### MIPS Procedure Example
+
+```c
+int fact (int n)
+{ 
+  if (n < 1) return 1;
+  else return n * fact(n - 1);
+}
+```
+
+- Argument passing
+  - n = x10
+- Return value
+  - x10
+
+x1(ra), x10(arguments)를 stack에 저장해야한다.
+
+```assembly
+fact:
+  addi sp, sp, -8 # Allocate space for ra, n
+  sw x1, 4(sp) # Save ra
+  sw x10, 0(sp) # Save n
+
+  addi x5, x0, 1 # ra = 1
+  bge x10, x5, L1 # if (n < 1)
+
+  addi x10, x0, 1 # return 1
+  addi sp, sp, 8 # Deallocate space
+  jalr x0, 0(x1) # Return
+L1:
+  addi x10, x10, -1 # n - 1
+  jal x1, fact # fact(n - 1)
+
+  lw x5, 0(sp) # Load n
+  mul x10, x5, x10 # n * fact(n - 1)
+
+  lw x1 4(sp) # Restore ra
+  addi sp, sp, 8 # Deallocate space
+  jalr x0, 0(x1) # Return
+```
+
+### Synchonization
+
+만약에 여러 thread가 하나의 procedure을 사용한다면 이를 위해 synchonization을 해야한다. 이를 위해 RISC-V A Extension의 atomic instruction을 사용한다.
+
+#### Atomic Operation
+
+- lr.w
+  - load word reserved
+  - lr.w x1, (x2)
+- sc.w
+  - store word conditional
+  - sc.w x1, (x2)
+
+memory location이 lr.w을 사용한 후 다른 thread에 의해 변경되지 않았다면 memory location에 value를 저장한다. 저장에 성공하면 x1을 0으로, 실패하면 x1을 non-zero value로 설정한다. 따라서 x1이 non-zero이면 다시 저장을 수행하는 연산을 수행하면 안전하게 저장할 수 있다.

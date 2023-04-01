@@ -39,8 +39,10 @@ rand, time header를 사용해서 랜덤 정수를 생성하고 슬라이드에 
 
 모든 공간을 사용할 수 있는 circular queue를 구현하라.
 
+count 변수를 추가하고 add하면 count 증가 delete하면 count 감소하도록 구현했다. 그리고 empty, full을 체크하는 조건문에 각각 count == 0, count == MAX를 추가하면 된다.
+
 ### Quiz 15
 
 rows와 colums가 주어졌을 때 처음부터 끝까지 가는데 걸리는 최대 거리를 구하시오.
 
-최대 거리는 
+최대 거리는 첫 번째와 마지막 칸도 계산에 포함 한다면 모두 칸을 한 번씩 방문한 m * n번이다.

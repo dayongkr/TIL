@@ -123,7 +123,6 @@ swap:
 
 top이 the lowest address를 가리킨다. 즉 bottom이 the highest address를 가리킨다.
 
-
 ``` machine code
 pushq R
 popq R
@@ -274,11 +273,11 @@ testq b, a
 - cmpq
   - compare quad
   - (a - b)가 0이면 같다는 사실을 통해 comparison을 한다.
-  - ZF = (a == b)
-  - SF = (a < b)
+  - ZF = (a == b), ZF = (a - b) == 0 ? 1 : 0
+  - SF = (a < b), a < b이면 (a - b)의 MSB는 1이다.
 - testq
   - logical and quad
-  - (a & b )연산을 통해 condition codes를 set한다.
+  - (a & b)연산을 통해 condition codes를 set한다.
   - ZF = (a & b == 0)
   - SF = (a & b < 0)
   - CF, OF = 0

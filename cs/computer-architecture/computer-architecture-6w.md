@@ -50,7 +50,7 @@ Micro-architecture의 예는 아래와 같다.
 
 Single-cycle CPU는 (PC, Instruction memory)와 (Regsiters, ALU, Data memory)는 서로 독립적으로 구성되어 있어서 동시에 수행될 수 있다.
 
-### Data Memory?
+### Data Memory and Instruction Memory is separated?
 
 수업에서 Instruction memory와 Data memory를 분리해서 사용하지만 사실 같은 main memory 안에 존재한다. 다만 processor 입장에서는 분리된 cache memory를 사용하기 때문에 분리해서 memory를 사용하는 것처럼 보이는 것이다.
 
@@ -94,3 +94,28 @@ write도 자세히 보자면 write regs는 먼저 32 bits의 one-hot-encoding을
 #### one hot encoding
 
 32개의 regs 중 하나를 선택하기 위해서는 32개의 MUX를 사용해야 한다. 하지만 32개의 MUX를 사용하면 32개의 wire가 필요하고 이는 매우 비효율적이다. 그래서 32개의 regs 중 하나만 1이고 나머지는 0인 32 bits의 값을 만들어서 32개의 MUX를 1개의 MUX로 대체한다. 이를 one-hot-encoding이라고 한다.
+
+### ALU - Arithmetic Logic Unit
+
+ALU는 4-bits를 사용해서 ALU Operation을 선택한다. 해당 bits는 HW에서 사용되는 것으로 SW에서는 상관없다. opcode 혹은 funct7 및 funct3을 사용해서 ALU Operation을 선택한다.
+
+ALU는 4개의 operation을 지원한다. (add, sub, and, or)
+
+#### CPU for R-type
+
+Instruction이 Fetch되면 Control Unit은 opcode를 읽고 R-type인지 확인한다. R-type이면 ALUOp를 10b으로 설정하고 RegWrite를 1로 설정한다. ALUOp이 10b이면 funct7과 funct3을 을 분석해야 하기 때문에 funct7, funct3와 함께 ALUOp이 ALU Control Unit에 전달되고 ALU Control Unit은 위 3가지를 사용해서 ALU Operation을 선택한다. 또한 rs1, rs2, rd를 Registers Unit에 전달되면 Registers Unit은 rs1, rs2를 읽고 ALU에 전달한다. ALU는 연산을 수행하고 결과를 Registers Unit에 전달한다. Registers Unit은 rd에 결과를 저장한다.
+
+### Data Memory Unit
+
+Regs File은 2 개의 Regs address가 필요하지만 Data Memory는 하나의 address만 필요하다. Regs address를 읽고 쓰는 것은 비용이 많이 안들지만 memory access는 비용이 많이 든다. 그래서 Data Memory는 1개의 address만 사용한다.
+
+MemRead가 1이면 해당하는 주소의 값을 읽어서 ALU에 전달하고 MemWrite가 1이면 ALU의 결과를 해당 주소에 저장한다.
+
+### Immediate Genration Unit
+
+- opcode를 통해 format을 확인한다.
+- Sign-extend를 통해 12 bits를 32 bits로 확장한다.
+
+## 마무리
+
+PA1 과제를 너무 허술하게 짠 것 같다 PA2 Emulate 과제를 할려면 오늘까지 배운 Unit 단위로 다시 구현을 해야할 것 같다.

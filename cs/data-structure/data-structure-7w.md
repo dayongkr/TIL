@@ -35,4 +35,4 @@ multiple queue에서 addq 부분을 rear 배열 없이 구현하라.
 
 polyPointer에서 특정 ptr을 찾아서 삭제하는 함수를 while문에서 for문으로 바꾸어라.
 
-선언 부분엔 temp에 ptr을 넣어주고, 조건 부분엔 *ptr을 넣어주고 그 다음엔 temp에 또 ptr을 넣어준다. for 문 안에는 *ptr을 다음 ptr로 바꿔주고, temp를 free해준다.
+선언 부분엔 temp에 ptr을 넣어주고, 조건 부분엔 \*ptr을 넣어주고 그 다음엔 temp에 또 ptr을 넣어준다. for 문 안에는 *ptr을 다음 ptr로 바꿔주고, temp를 free해준다.

@@ -118,4 +118,69 @@ movl pgh(%rdx, %rax, 4), %eax
 ret
 ```
 
+#### Variable-sized array
 
+```c
+int vm_el(long n, int A[n][n], long i, long j) {
+  return A[i][j];
+}
+```
+
+```asm
+// n in %rdi, A in %rsi, i in %edx, j in %rcx
+vm_el:
+  imulq %rdx, %rdi // n * i
+  leaq (%rsi, %rdi, 4), %rax // A + 4 * n * i
+  movl (%rax, %rcx, 4), %eax // M[A + 4 * n * i + 4 * j]
+  ret
+```
+
+Variable-sized array여도 큰 차이가 없다.
+
+## Structure
+
+``` c
+struct rec {
+  int i;
+  int j;
+  int a[2];
+  int *p;
+};
+
+void set(struct rec *r) {
+  r -> j = r -> i;
+}
+```
+
+``` asm
+// r in %rdi
+set:
+  movl (%rdi), %eax // r -> i
+  movl %eax, 4(%rdi) // r -> j = r -> i
+  ret
+```
+
+각 멤버는 연속된 메모리 공간에 저장된다.
+
+### Alignment restriction
+
+Structure은 각 요소의 데이터 크기가 다르기 때문에 메모리 공간에 저장할 때 alignment restriction을 따라야 한다. 예를 들어 K Bytes를 저장할 때 주소를 K의 배수로 맞춰야 한다. 이를 통해 CPU가 더 빠르게 접근할 수 있다.
+
+따라서 저번에 jump table에서 `.align 8`을 했던 것이 주소를 8의 배수로 맞춰서 더 빠르게 접근하기 위함이었다.
+
+#### Alignments for structures
+
+- 멤버마다 alignment을 따른다.
+  - 각 멤버 사이에 gap을 넣어 alignment을 맞춘다.
+  - 따라서 버려지는 메모리 공간이 생길 수 있다.
+- Overall structure alignment는 member의 alignment 중 가장 큰 것을 따른다.
+  - 17 Bytes의 structure가 있으면 8 Bytes의 alignment을 따르기 위해 9 Bytes의 gap을 넣어 24 Bytes의 메모리 공간을 차지한다.
+  - 따라서 버려지는 메모리 공간이 생길 수 있다.
+
+따라서 저장하는 순서를 바꿈으로써 버려지는 메모리 공간을 줄일 수 있다.
+
+## Union
+
+Structure와 달리 union은 각 멤버가 같은 메모리 공간을 공유한다. 따라서 union의 크기는 가장 큰 멤버의 크기와 같다.
+
+예를 들어 8 Bytes의 union이 있으면 int 2개는 8 Bytes 안에 저장되는데 little endian이라면 low-order byte가 먼저 저장된다. 반대로 big endian이라면 high-order byte가 먼저 저장된다.

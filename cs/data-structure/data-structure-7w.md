@@ -17,6 +17,42 @@ C에서는 struct를 이용하여 linked list를 만들 수 있다. 구현 방�
 
 pointer가 한 번 날라가면 다시 돌아올 수 없기 때문에, linked list를 사용할 때는 항상 주의해야 한다.
 
+### Stack
+
+위 linked list를 이용하여 stack을 구현할 수 있다.
+
+``` c
+typedef struct stack* stackPointer;
+typedef struct stack {
+  element data;
+  stackPointer link;
+} stack;
+stackPointer top = NULL;
+top = (stackPointer)malloc(sizeof(stack));
+top -> link = (stackPointer)malloc(sizeof(stack));
+```
+
+위와 같이 linked list에 스택의 개념을 추가하여 스택을 구현할 수 있다. 여기에 push와 pop을 구현하면 된다.
+
+### Queue
+
+Queue 또한 linked list를 이용하여 구현할 수 있는데 이 때는 front와 rear를 이용한다. 그리고 addq와 deleteq를 구현하면 된다.
+
+### Polynomials
+
+struct와 pointer을 사용해서 polynomial을 구현할 수 있다.
+
+```c
+typedef struct poly* polyPointer;
+typedef struct poly {
+  int coef;
+  int expon;
+  polyPointer link;
+} poly;
+```
+
+link가 null이 될 때까지 while문을 돌려서 polynomial을 구현할 수 있다.
+
 ## Quiz
 
 ### Quiz 19

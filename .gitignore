@@ -1,2 +1,9 @@
+# c
+*
+!*.*
+!*/
+
 .DS_Store
-.vscode/
+.vscode
+.idea
+cmake-build-debug

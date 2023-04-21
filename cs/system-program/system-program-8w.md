@@ -39,13 +39,13 @@ fgets를 사용하면 읽고 싶은 최대 길이를 지정할 수 있다. 따�
 
 #### Stack randomization
 
-xploit code를 injection만 해서는 안 돼고 해당 code를 실행될 수 있게 해야 하기 때문에 rsp가 필요하다. 따라서 매번 프로그램이 시작할 때 stack의 위치를 매번 바꿔서 알기 어렵게 만드는 방법이다. 
+xploit code를 injection만 해서는 안 돼고 해당 code를 실행될 수 있게 해야 하기 때문에 rsp가 필요하다. 따라서 매번 프로그램이 시작할 때 stack의 위치를 매번 바꿔서 알기 어렵게 만드는 방법이다.
 
-Linux 32-bit 기준 0xff7fc59c ~ 0xffffd09c(range of 2^23)을 가진다. 이 범위에서 rsp를 맞출 확률은 로또 1등 확률과 비슷하다.  64-bit은 12byte를 사용하여 0x7fff0001b698 ~ 0x7ffffffaa4a8 (range of 2^32)을 가진다.
+Linux 32-bit 기준 0xff7fc59c ~ 0xffffd09c(range of 2^23)을 가진다. 이 범위에서 rsp를 맞출 확률은 로또 1등 확률과 비슷하다. 64-bit은 12byte를 사용하여 0x7fff0001b698 ~ 0x7ffffffaa4a8 (range of 2^32)을 가진다.
 
 #### ASLR(Address Space Layout Randomization)
 
-Stack randomization을 더 진화 시킨 것으로 모든 address을 randomization을 한다. 
+Stack randomization을 더 진화 시킨 것으로 모든 address을 randomization을 한다.
 
 이는 nop sled를 사용해서 뚫을 수 있다. nop는 아무것도 하지 않는 instruction으로 이를 무시하고 다음 instruction을 실행하는 성질을 가지고 있다. 따라서 return address에 nop이 하나만 걸려도 쭉 타고 올라가 exploit code가 실행될 수 있는 것이다.
 
@@ -61,4 +61,4 @@ Canary는 stack에 저장되는 값으로 stack이 overflow되는지 확인하�
 
 이를 뚫는 방법이 있는데 이를 RTL(Return-to-Libc)이라고 한다. library에서는 execute 권한이 있기 때문에 system library의 함수에 malware 실행파일의 주소를 넣어서 실행하는 방법이다.
 
-또 다른 방법으로는 ROP(Return Oriented Programming)이라는 방법이 있다. 이는 기존에 있는 코드를 조합해서 새로운 코드를 만드는 방법이다. 
+또 다른 방법으로는 ROP(Return Oriented Programming)이라는 방법이 있다. 이는 기존에 있는 코드를 조합해서 새로운 코드를 만드는 방법이다.

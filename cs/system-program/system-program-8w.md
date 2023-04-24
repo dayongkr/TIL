@@ -39,7 +39,7 @@ fgets를 사용하면 읽고 싶은 최대 길이를 지정할 수 있다. 따�
 
 #### Stack randomization
 
-xploit code를 injection만 해서는 안 돼고 해당 code를 실행될 수 있게 해야 하기 때문에 rsp가 필요하다. 따라서 매번 프로그램이 시작할 때 stack의 위치를 매번 바꿔서 알기 어렵게 만드는 방법이다.
+exploit code를 injection만 해서는 안 돼고 해당 code를 실행될 수 있게 해야 하기 때문에 rsp가 필요하다. 따라서 매번 프로그램이 시작할 때 stack의 위치를 매번 바꿔서 알기 어렵게 만드는 방법이다.
 
 Linux 32-bit 기준 0xff7fc59c ~ 0xffffd09c(range of 2^23)을 가진다. 이 범위에서 rsp를 맞출 확률은 로또 1등 확률과 비슷하다. 64-bit은 12byte를 사용하여 0x7fff0001b698 ~ 0x7ffffffaa4a8 (range of 2^32)을 가진다.
 
@@ -55,9 +55,9 @@ Canary는 stack에 저장되는 값으로 stack이 overflow되는지 확인하�
 
 컴파일러가 컴파일할 때 canary를 생성해서 buffer overflow를 막는 방법이다.
 
-#### DEF(Data Execution Prevention)
+#### DEP(Data Execution Prevention)
 
-대부분의 system에는 종류별로 access control(read, write, execute)을 가지고 있다. 하지만 x86에서는 read와 execute를 합쳐서 사용하기 때문에 read 권한만 가지고 있더라도 execute 권한을 가질 수 있다. DEF는 이러한 문제를 해결하기 위해 execute 권한을 가지지 않은 메모리에 있는 코드를 실행할 수 없게 한다. 따라서 stack에 있는 코드를 실행할 수 없게 한다.
+대부분의 system에는 종류별로 access control(read, write, execute)을 가지고 있다. 하지만 x86에서는 read와 execute를 합쳐서 사용하기 때문에 read 권한만 가지고 있더라도 execute 권한을 가질 수 있다. DEP는 이러한 문제를 해결하기 위해 execute 권한을 가지지 않은 메모리에 있는 코드를 실행할 수 없게 한다. 따라서 stack에 있는 코드를 실행할 수 없게 한다.
 
 이를 뚫는 방법이 있는데 이를 RTL(Return-to-Libc)이라고 한다. library에서는 execute 권한이 있기 때문에 system library의 함수에 malware 실행파일의 주소를 넣어서 실행하는 방법이다.
 

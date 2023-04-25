@@ -11,7 +11,7 @@ Hardware도 설계를 위해 언어가 필요한데 크게 2가지가 있다.
 - Verilog
 - VHDL
 
-#### Verilog Exa
+#### Verilog Example
 
 ```verilog
 module test (clk, input_1, input_2, out);

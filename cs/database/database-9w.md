@@ -54,12 +54,72 @@ Disk 안에는 이러한 Index, Data Files를 제외한 한 가지 파일이 더
 
 ### Fixed-Length Records
 
-모든 record가 같은 크기를 가지고 있을 경우를 가정하고 설명한 것인데 그럴 일이 없으므로 패스
+Packed 방식과 Unpacked 방식이 있는데 먼저 Packed 방식은 Slot 사이에 Free Space가 없도록 계속 정렬을하는 방식인데 이렇게 되면 record id를 계속 바꿔야 하기 때문에 이를 참조하는 경우 불필요한 과정들이 생기게 된다. 따라서 이렇게 구현하지 않고 record를 삭제할 경우 빈 공간으로 남겨두는 unpacked 방식을 사용한다. 하지만 Unpacked는 이러한 Free space를 표시하기 위해 추가적인 공간이 필요하다. 참고로 Bitmap을 통해 표시한다.
 
 ### Variable-Length Records - Tuple Oriented, Slotted Page Structure-
 
 page 안에 record가 저장되는 방식을 설명한다. data와 slot으로 구성되어 있는데 서로 반대편에서 시작한다. slot은 record의 위치와 크기를 저장한다.(<record offset, length>) 그리고 slot의 맨 앞에는 slot의 개수를 저장한다.
 나머지는 free space이고 data와 slot array가 만나면 가득 찬 것이다.
+
+### Oracle Formatted Block Dumps
+
+실제 Dumps 파일을 보게되면 records가 몇개 있는지(nrow), 시작 offset(fsbo)과 end offset(fseo)등이 있고 각 record마다의 length(tl)와 lock(lb)이 걸려 있는지, col count(cc)등이 있다.
+
+### Data Layout on Disk Page
+
+#### Row-Store
+
+일반적으로 OLTP 같은 경우에는 Row를 기반으로 검색을 하기 때문에 기본적으로 DBMS는 row를 기반으로 저장한다. 이러한 방식을 row-store라고 한다.
+
+#### C-Sore
+
+하지만 OLAP 같은 경우에는 Column 단위로 분석하는 경우가 많아 Column을 기반으로 저장하는 방식이 있다. 이러한 방식을 column-store라고 한다. Oracle 같은 경우에는 기본적으론 row-store을 사용하지만 in-memory에 column-store도 같이 사용한다고 한다.
+
+## Record Formats
+
+Fixed Length일 경우 Base address와 각 field의 크기를 안다면 서로 더해서 해당 field의 address로 갈 수 있다.
+
+하지만 Variable Length일 경우에는 각 field의 크기를 알 수 없기 때문에 field의 끝을 알리는 Special Symbols를 통해 field의 끝을 알 수 있다. 하지만 이 같은 경우엔 원하는 값까지 scan을 해야하는 cost가 발생하기 때문에 record의 앞에 각 field의 offset을 제공해 바로 찾아갈 수 있게 하는 방법도 사용한다.
+
+### Row Layout in Oracle
+
+기본적으로 Row head와 column data로 구성되어 있다.
+
+- Row Head
+  - Row Head에는 Row flag, Lock byte, Column count등이 있다.
+- Column Data
+  - 맨 앞에는 column length가 있다.(1, 3byte)
+  - 긴 field을 경우 앞에 0xFE를 붙여서 표시한다.
+  - 0xFF는 null을 의미한다.
+
+### System Catalogs
+
+- 각 Relation 별
+  - 이름, 파일 구조, 파일 이름
+  - 속성 이름 및 타입
+  - 인덱스 이름
+  - 무결성 제약조건
+- 각 index 별
+  - 자료구조와 key fields
+- 각 view 별
+  - 이름과 정의
+- 통계, 사용자 정보, buffer pool 정보 등
+
+위와 같이 oracle system을 위한 정보들이 담겨있다.
+
+## File Access Methods
+
+### Full Table Scan
+
+테이블의 모든 record를 읽는 방법이다. Index가 없는 경우에는 이 방법을 사용한다. disk I/O를 얼마나 필요한지를 계산하는 cost model이라는 것이 있다.
+
+#### Cost Model
+
+필요한 데이터들은 이미 메모리에 있을 수 있기 때문에 이를 염두하고 계산을 해야 한다. Oracle은 미리 정의한 db_file_multiblock_read_count 테이블을 사용하는데 cost는 블록의 갯수 / Adjusted Multiblock Read Count + 1 이다. 당연히 실제 cost와 다를 수 있다.
+
+### Index Range Scan
+
+Index가 있을 경우 index를 통해 record를 읽는 방법이다. 덕분에 table 전체를 스캔할 필요가 없어 physical reads가 상당히 줄어든다.
 
 ## Disk Space Management
 

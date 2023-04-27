@@ -59,3 +59,31 @@ SW는 버그가 발생하면 업데이트를 통해 수정이 가능하지만 HW
 첫 번째 방법으로는 Logic Simulation이 있다. 이 방법은 SW와 비슷하게 testbench를 만들어서 test하는 방법이다. 하지만 이 방법은 너무 많은 시간이 걸린다.
 
 두 번째 방법은 FPGA Emulation이다. 이 방법은 실제로 HW를 만들어서 test하는 방법이다. Programmable hardware를 사용해서 testbench를 만들어서 test한다. 이 방법은 Logic Simulation보다 훨씬 빠르다. 다만 real chip을 만드는 것보다는 느리다.
+
+## Pipelined Datapath and Control
+
+최대한 overhead를 발생 시키지 않으면서 hazard를 막는 것이 중요하다. RISC-V에서는 5 stage pipeline을 사용한다.
+
+- IF: Instruction Fetch
+- ID: Instruction Decode
+- EX: Execute
+- MEM: Memory Access
+- WB: Write Back
+
+> 참고로 수업 내에서는 Structure Hazard는 없다고 가정할 예정이다.
+
+### Divining Pipeline Stages
+
+각 stage는 서로 다른 propogation delay을 가지고 있기 때문에 이들을 서로 Synchronize 하는 과정이 필요하다.
+
+만약에 separtion 없이 pipeline을 구성하면 서로 다른 Instructions 끼리 충돌이 발생할 수 있다. 따라서 각 stage 사이에 separation이 필요하다.
+
+그래서 우리는 이전의 instruction을 기억하고 다음 instruction을 hold할 수 있는 barrier을 각 stages 사이에 두어서 이를 해결한다. 이를 pipeline register라고 한다.
+
+### Pipleline Register
+
+Pipeline Register는 0 -> 1 까지 데이터를 저장하지 않고 있다가 1 -> 0으로 바뀔 때 데이터를 저장한다. 이를 통해 physical하게 divide를 할 수 있다. Pipeline Register는 Flip-Flop으로 구성되어 있다.
+
+하지만 WB stage에서는 write를 하기 위해 ID stage에 있는 module을 사용하는데 해당 IF:ID Pipeline Register는 다른 instruction의 값을 가지고 있기 때문에 이를 사용할 수 없다. 따라서 MEM:WB Pipeline Register에서 data를 가져오는 추가적인 datapath가 필요하다.
+
+또한 Control Signal도 해당 Instruction에 해당하는 Control Signal이 필요하므로 이를 위한 추가적인 datapath가 필요한데 이는 각 stages 별로 필요한 data만 각 pipeline register에 저장하는 방식으로 해결한다.

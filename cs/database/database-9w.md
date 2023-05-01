@@ -166,3 +166,35 @@ buffer pool에 있을 경우를 Hit, 없을 경우를 Miss라고 한다. Hit rat
 Replacement Policy에는 Random, FIFO, LRU, MRU, LFU, Clock 등이 있다. LRU는 Least Recently Used로 가장 마지막에 unpinned 된 것을 track해 이를 대체한다. MRU는 Most Recently Used로 가장 최근에 unpinned 된 것을 track해 이를 대체한다. LFU는 Least Frequently Used로 가장 적게 사용된 것을 track해 이를 대체한다.
 
 우리가 주로 배울 내용은 LRU로 Queue로 구현을 할 수 있고 가장 흔한 policy이다.
+
+#### LRU is NOT Scan-Resistant
+
+만약에 sequential 하게 데이터를 가져온다면 끊임없이 replacement가 발생하는 경우가 생긴다. 따라서 모든 데이터를 scan하는 OLAP에서는 LRU가 적합하지 않을 수가 있다.
+
+#### Clock Algorithm
+
+cycle에 frame을 배정하고 각 frame에 reference bit을 저장한다. pin count가 0이 되면 reference bit가 켜진다. 이렇게 켜진 것은 자기 차례가 오면 꺼지고 이렇게 꺼진 것을 찾았을 때 replacement를 수행한다. 따라서 다 썼다고 바로 replacement가 되는 것이 아니라 한 번의 기회를 더 준다.
+
+#### Belady's Min Algorithm
+
+미래에 relation의 상태를 알 수 있다면 어떻게 replacement algorithm을 optimizing 할 수 있을지에 대한 내용으로 가장 오래 필요 없을 것을 대체하는 것이 좋다고 나와 있다.
+
+### IO
+
+#### CPU IO Overlapping
+
+miss가 나면 disk IO가 발생하고 이 동안 CPU는 다른 작업을 수행할 수 있다. 이럴 때 멀티 쓰레딩을 통해 CPU IO Overlapping을 할 수 있다.
+
+#### IO Crisis in OLTP
+
+hdd를 사용할 때에는 IOPS가 매우 낮아서 여러 hdd를 사용해야 했다. 그래서 상당한 비용이 발생했다. 또한 balanced system을 구축하기 위해서는 CPU가 빨라지는 속도에 맞춰서 disk의 속도도 빨라져야 했다. 하지만 이러한 무어의 법칙에 disk의 성장 속도가 따라가지 못했다. 때문에 결국 HDD를 추가 구매해야 했다.
+
+하지만 SSD가 나오고 이러한 문제가 해결되었다. SSD는 IOPS가 높아서 여러 개의 SSD를 사용할 필요가 없어졌다. 덕분에 비용 문제가 많이 해결되었다.
+
+이러한 과정에서 HDD를 제조하는 회사가 부를 축적했다가 main memory를 제조하는 회사가 부를 축적했고 ssd 등장으로 Flash memory를 제조하는 회사가 부를 축적했다. 이러한 것들을 보면 시대의 흐름에 따라 부를 축적하는 회사가 바뀌는 것을 볼 수 있다.
+
+### 5 min rule
+
+어떤 데이터를 어떠한 저장 장치에 저장해야 효율적인 가를 정의한 규칙으로 최대 5분마다 사용하는 데이터는 memory에 저장하고 5분 이상 사용하지 않는 데이터는 disk에 저장한다.
+
+요즘에는 10초 법칙도 나와서 10초마다 사용하는 데이터는 ssd에 저장하고 10초 이상 사용하지 않는 데이터는 disk에 저장한다.

@@ -63,7 +63,7 @@ EU는 operation에 맞는 functional unit으로 dispatch해 실제 연산을 수
   - Integer arithmetic, branch
   - Store, address computation
 
-근데 결국 4 개의 integer arithmetic unit, 1개의 integer multiplication unit, 1 개의 FP addition, 1 개의 FP multiplication, 2 개의 load operation unit가 있다는 정도의 사실을 알고 있으면 된다.
+근데 결국 4 개의 integer arithmetic unit, 1개의 integer multiplication unit, 1 개의 FP addition, 2 개의 FP multiplication, 2 개의 load operation unit가 있다는 정도의 사실을 알고 있으면 된다.
 
 이러한 functional unit의 performance의 특징으로는 다음과 같다.
 

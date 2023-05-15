@@ -77,6 +77,7 @@ EU는 operation에 맞는 functional unit으로 dispatch해 실제 연산을 수
   - operation을 수행하기 위해 사용 가능한 functional unit의 개수
 - Max throughput
   - 한 cycle에 수행할 수 있는 operation의 최대 개수
+  - Capacity * 1 / issue-time
   - 역수는 throughput bound를 의미한다.
 
 저번에 최적화 했던 combine 함수의 CPE를 보면 Latency과 비슷하므로 sequential하게 실행했을 때의 최소 실행 시간이라고 볼 수 있다. 하지만 parallel하게 하면 더 최적화가 가능하다.

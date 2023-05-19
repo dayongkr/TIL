@@ -56,3 +56,55 @@ Cache Memory에서 data가 있는지 어떻게 알까?
 | Tag  | Index                                                    | Offset                                                            |
 | ---- | -------------------------------------------------------- | ----------------------------------------------------------------- |
 | rest | block size으로 크기 결정 (e.g. 8 words => 2^5 => 5 bits) | cache에 있는 block의 갯수로 결정 (e.g. 8 blocks => 2^3 => 3 bits) |
+
+### Cache Example
+
+8bit address, 1 word/block, 8 blocks를 가진 cache를 가정하자. 이때 block size는 1 word이므로 offset은 2bits, cache에 있는 block의 갯수는 8개이므로 index는 3bits, 나머지는 tag가 된다. 예를들어 0x58은 01011000이므로 tag는 010, index는 110, offset은 00이 된다.
+
+> direct map의 한계로 여러 block이 같은 index를 가질 수 있다. 이에 따른 miss가 발생하는 경우가 생길 수 있다.
+
+추가로 한 예시를 더 보자면 4KB cache, 1 word/block일 경우 4KB / 4B = 2^10 이므로 10 bits가 index가 되고 offset은 2bits, 나머지는 tag가 된다. 만약에 4 words/block 일 경우 index에 여러 block이 들어갈 수 있으므로 이들 중 하나를 선택해야 한다. 이때 사용하는 것이 block offset이다. 이렇게 하면 MUX도 필요하고 overhead가 늘어난다.
+
+다만 근처에 있는 버퍼를 가져오는 것이기 때문에 Spatial Locality에 따라 성능이 좋아진다.
+
+> Byte offset은 lh, lb일 떄 사용한다.
+
+### Block Size Tradeoffs
+
+Block의 크기가 커지면 cache line의 수가 줄어들고 이에 따라 cache conflict가 많이 발생하여 miss가 많이 발생한다. 크기가 작아지면 spatial locality가 떨어져 miss가 많이 발생한다. 따라서 적절한 크기를 선택해야 한다.
+
+### Handling Write(Store) Operations
+
+- Hit
+  - cache는 항상 최신의 값을 가지고 있어야 한다.
+  - memory는 최신 값을 가지고 있지 않아도 된다.
+- Miss
+  - memory에 최신 값을 저장한다. (No Write Allocate)
+  - cache에도 최신 값을 저장한다. (Write Allocate)
+
+#### Write-through
+
+메모리도 최신 값을 가지고 있도록 하는 방법으로 write가 발생하면 cache와 memory에 모두 write를 한다. 이렇게 하면 memory 접근이 많아져 성능이 떨어진다. 이를 해결하기 위해 write buffer를 사용한다. 이는 mem stage에 추가로 unit을 만들어 구현을 하는데 일단 쓰여질 값을 저장해두고 다른 일을 하다가 memory에 write를 해야 할 때 한번에 write를 하는 방법이다.
+
+> 보통 buffer가 꽉 차면 write를 한다.
+
+#### Write-back
+
+cache에만 write를 하고 memory에는 write를 하지 않는다. 이때 cache에는 dirty bit를 사용하여 memory이 업데이트 되었는지 확인한다. 만약에 block이 교체될 때 dirty bit가 1이면 memory에 write를 한다. 여기서도 memory에 write를 할 때 write buffer를 사용한다.
+
+### Cache Write Summary
+
+- Write-through, write allocate
+  - hit: write to cache and memory
+  - miss: fetch block from memory, write to cache and memory
+- Write-through, no write allocate
+  - hit: write to cache and memory
+  - miss: write to memory
+- Write-back, write allocate
+  - hit: write to cache (set dirty bit)
+  - miss: fetch block from memory, write to cache (set dirty bit)
+  - evict: write to memory if dirty
+- Write-back, no write allocate
+  - hit: write to cache (set dirty bit)
+  - miss: write to memory
+  - evict: write to memory if dirty

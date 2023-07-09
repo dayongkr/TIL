@@ -226,3 +226,75 @@ func isSexy(person string, c chan string) {
 - 따라서 channel을 사용해서 goroutine과 통신해야 한다.
 - chan keyword를 사용한다.
 - <- 를 사용해서 channel에 값을 보내고 받는다.
+
+## Go Query
+
+JQuery의 Go 버전이라고 한다. Go의 net/html 패키지를 기반으로 만들어졌다.
+
+```go
+import {
+  "net/http"
+  "github.com/PuerkitoBio/goquery"
+}
+
+func main() {
+  res, err := http.Get("http://metalsucks.net")
+
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  defer res.Body.Close()
+  if res.StatusCode != 200 {
+    log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
+  }
+
+  doc, err := goquery.NewDocumentFromReader(res.Body)
+    if err != nil {
+      log.Fatal(err)
+    }
+
+    doc.Find(".")
+}
+```
+
+위와 같이 html 문서에서 원하는 부분을 찾을 떄 유용하게 사용할 수 있다.
+
+### Each
+
+Find로 해당하는 요소들을 찾고 Each를 사용하면 각각의 element에 대해서 함수를 실행할 수 있다.
+
+## Packages and Functions
+
+- string
+  - Fields
+    - 문자열을 공백으로 나눈다.
+  - Split
+    - 문자열을 특정 문자로 나눈다.
+  - TrimSpace
+    - 문자열의 앞뒤 공백을 제거한다.
+  - Repeat
+    - 문자열을 반복한다.
+    - e.g. Repeat("a", 5) => "aaaaa"
+- os
+  - Create
+    - 파일을 생성한다.
+- csv
+  - NewWriter
+    - csv writer를 생성한다.
+- append
+  - slice에 값을 추가한다.
+  - append(slice, value)
+  - append(slice, slice...)
+- labstack/echo
+  - Context
+    - Attachment
+      - 첨부파일을 클라이언트에게 전송한다.
+    - File
+      - 파일을 클라이언트에게 전송한다.
+  - New
+    - echo instance를 생성한다.
+  - GET
+    - GET method를 사용한다.
+  - Logger
+    - logger를 사용한다.

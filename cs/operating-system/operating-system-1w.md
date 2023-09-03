@@ -35,7 +35,7 @@
 
 ### Booting
 
-Bootstrap program가 boot program을 디스크에서 부터 가져오고 boot program은 kernel을 메모리에 올린다. (즉 2 단게에 걸쳐 부팅이 된다.)
+Bootstrap program(loader)가 boot program을 디스크에서 부터 가져오고 boot program은 kernel을 메모리에 올린다. (즉 2 단게에 걸쳐 부팅이 된다.)
 
 ## 운영체제의 역할
 

@@ -23,3 +23,41 @@
 2. x[i] != y[j] 이면 c[i][j] = max(c[i-1][j], c[i][j-1])
 
 만약에 가장 긴 공통 부분 수열 자체를 구하고 싶으면 x[i] = y[j]일 때마다 stack에 넣고 나중에 stack을 pop하면 된다.
+
+### SRTBOT
+
+MIT 강의에서 나온 recursion을 위한 framework이다.
+
+1. subproblem을 정의한다.
+2. recurrence를 정의한다.
+3. topological order를 정의한다.
+4. base case를 정의한다.
+5. original problem을 정의한다.
+6. time complexity를 계산한다.
+
+Fibonacci sequence를 예로 들어보자.
+
+1. subproblem을 정의한다.
+   1. F(i) = i번째 Fibonacci number (1<= i <= n)
+2. recurrence를 정의한다.
+   1. F(i) = F(i-1) + F(i-2)
+3. topological order를 정의한다.
+   1. i는 증가하는 순서대로 계산한다.
+4. base case를 정의한다.
+   1. F(1) = 1, F(2) = 1
+5. original problem을 정의한다.
+   1. F(n)
+6. time complexity를 계산한다.
+   1. T(n) = T(n-1) + T(n-2) + O(1)
+   2. T(n) = O(2^n)
+   3. 단. memoization을 사용하면 n \* O(1) additions을 하기 때문에 O(n)이 된다.
+
+merge sort도 SRTBOT으로 풀 수 있는데 merge sort는 이전 값들을 사용하지 않기 때문에 memoization이 도움이 되지 않는다.
+
+### Good subproblems
+
+subproblem을 정의할 때에는 아래 3가지를 고려해야 한다.
+
+- prefix: x[:i] O(n)
+- suffix: x[i:] O(n)
+- subsequence: x[i:j] O(n^2)

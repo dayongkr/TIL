@@ -25,3 +25,69 @@ Amortize란 상환을 의미하며, amortized analysis는 한 동작이 최악�
 #### Potential Method
 
 위치에너지 컨셉을 가지는 방법으로 actual cost + potential i번째 연산을 수행한 자료구조 - potential i-1번째 연산을 수행한 자료구조로 계산한다. 예를들어 stack에서는 potential을 stack에 남아있는 원소의 개수로 정의한다.
+
+## Graph
+
+Graph란 Vertex와 Edge로 이루어진 nodes들의 set이다. 보통 E = O(V^2)이다.
+
+- undirected graph
+  - edge가 방향성이 없는 그래프
+- directed graph
+  - edge가 방향성이 있는 그래프
+- connected graph
+  - 모든 vertex가 서로 연결되어 있는 그래프
+- unconnected graph
+  - 모든 vertex가 서로 연결되어 있지 않은 그래프
+- bipartite graph
+  - vertex를 두 개의 그룹으로 나눌 수 있는 그래프
+  - 그룹 내의 vertex들은 서로 연결되어 있지 않고 다른 그룹의 vertex들과만 연결되어 있다.
+- Acyclic graph
+  - cycle이 없는 그래프
+- multigraph
+  - 두 vertex 사이에 여러 개의 edge가 존재할 수 있는 그래프
+- graph가 spase하면 adjacency list를 사용하고 dense하면 adjacency matrix를 사용한다.
+  - sparse: E = O(V)
+  - dense: E = O(V^2)
+- adjecny matrix로 undirected graph를 표현하면 대각선은 필요없고 대칭이기 때문에 절반만 저장하면 된다.
+- adjency list는 O(V+E)의 공간복잡도를 가진다.
+  - V = head node
+  - E = linked list
+
+### BFS
+
+방문하지 않은 Edge들을 Queue에 넣고 방문한 Edge들을 visited에 넣는다. 이를 반복하면 BFS가 된다. BFS는 O(V+E)의 시간복잡도를 가진다. 교안에서는 방문 안한 Edge를 white, 방문한 Edge를 black, 방문한 Edge를 queue에 넣은 Edge를 gray로 표현한다.
+
+방문하면서 count를 세면 한 노드에서 다른 노드로 가는 최단 경로를 구할 수 있다.
+
+### DFS
+
+DFS는 깊이 우선으로 보통 재귀를 이용해서 구현한다 즉 방문 가능한 Edge를 찾으면 바로 방문하고 더이상 방문할 수 없으면 다시 돌아와서 다른 Edge를 찾는다. 이를 반복하면 DFS가 된다. DFS는 O(V+E)의 시간복잡도를 가진다.
+
+- Tree edge
+  - 새로운 vertex를 방문하는 edge
+- Back edge
+  - 현재 vertex의 ancestor로 가는 edge
+- Forward edge
+  - 현재 vertex의 descendant로 가는 edge
+  - tree edge가 아닌
+- Cross edge
+  - 현재 vertex의 descendant가 아닌 다른 vertex로 가는 edge
+
+Back edge가 존재하면 cycle이 존재한다. 또한 cycle이 존재하지 않다면 back edge가 존재하지 않는다.
+
+DFS 코드에서 인접한 vertex가 gray이면 cycle이 존재한다고 판단할 수 있다. undirected acyclic forest(E<=V-1)에서는 O(V)만에 cycle을 찾을 수 있다.
+
+- DAG
+  - directed acyclic graph
+  - cycle이 없는 directed graph
+- Forward
+  - 만약에 Graph가 acyclic이면 back edge가 존재하지 않는다.
+- Backward
+  - 만약에 back edge가 존재하면 cycle이 존재한다.
+  - contrapostive: G가 cycle이 있다고 가정한다.
+    - v가 제일 먼저 방문되는 vertex라고 가정한다.
+    - u는 v의 predecessor이다.
+    - v가 방문하면 모든 cycle은 white가 된다.
+    - 모든 인접한 vertex를 방문한다.
+    - 때문에 u->v는 grey to grey가 되므로 back edge가 된다.
+    - 따라서 cycle이 존재하면 back edge가 존재한다.
